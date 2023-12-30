@@ -1,9 +1,9 @@
 {
-    "name": "@zachfejes/js-horizons",
+    "name": "@toni-pad/js-horizons",
     "version": "1.0.2",
     "description": "JavaScript client wrapper for the HORIZONS database",
     "license": "MIT",
-    "repository": "zachfejes/js-horizons",
+    "repository": "toni-pad/js-horizons",
     "main": "index.js",
     "keywords": [
         "js-horizons",
@@ -21,7 +21,8 @@
         "planet",
         "planets",
         "orbit",
-        "ephemerids"
+        "ephemerids",
+        "toni-pad"
     ],
     "dependencies": {
         "telnet-client": "^1.2.11"
@@ -35,7 +36,7 @@
         "regenerator-runtime": "^0.13.1"
     },
     "scripts": {
-        "test": "jest --env=jsdom --coverage"
+        "test": "jest --env=jsdom --coverag --detectOpenHandles"
     },
     "jest": {
         "coverageReporters": [

@@ -1,69 +1,47 @@
-const Horizons = require("../index");
-
-describe("should fail", () => {
-    test("if trying to search without initializing", () => {
-        let horizons = new Horizons();
-        
-        const ERROR_NOT_CONNECTED = new Error("Horizons is not connected. You must initialize it before making a request.");
-
-        expect(() => { horizons.search("test", () => {}); })
-            .toThrow(ERROR_NOT_CONNECTED[0]);
-
-        if(horizons.isConnected()) {
-            horizons.close();
-        }
-    });
-});
+const {Horizons} = require("../index");
 
 describe("Horizons class...", () => {
-    test('can create an object and initialize it with a connection to JPL HORIZONS', (done) => {
-        let horizons = new Horizons();
-        expect(horizons.isConnected()).toBe(false);
-
-        let callback = (error, data) => {
-            expect(horizons.isConnected()).toBe(true);
-            horizons.close(() => {
-                done();
-            })
-        }
-
-        horizons.initialize(callback);
-    });
-
-    test('can search for a body and retrieve a list of suggestions', (done) => {
-        let horizons = new Horizons();
-
-        expectedValues = [
-            "Mars Barycenter", 
-            "Mars", 
-            "Mars Orbiter Mission (MOM)", 
-            "Mars Express (spacecraft)",
-            "Mars Odyssey (spacecraft)",
-            "Mars Reconnaissance Orbiter",
-            "Mars Science Laboratory",
-            "ExoMars TGO (spacecraft)"
+    test('can search for a body and retrieve a list of suggestions', async () => {
+        const expectedNames = [
+            'Mars Barycenter', 
+            'Mars', 
+            'Mars Orbiter Mission (MOM)', 
+            'Mars Express (spacecraft)',
+            'Mars Odyssey (spacecraft)',
+            'Mars Pathfinder (spacecraft)',
+            'Mars Reconnaissance Orbiter',
+            'Mars Science Laboratory',
+            'ExoMars16 TGO (spacecraft)'
         ];
 
-        let callback = (error, data) => {
-            horizons.close(() => {
-                done();
-            })
-        }
-
-        horizons.initialize((error, response) => {
-            horizons.search("mars", (error, response) => {
-
-                console.log("RESPONSE: ", response);
-                
-                for(let i = 0; i < expectedValues.length; i++) {
-                    expect(response.findIndex(x => x.name.includes(expectedValues[i])) >= 0).toBe(true);
-                }
-
-                horizons.close(() => {
-                    done();
-                })
-            });
+        const horizons = new Horizons();
+        const results = await horizons.search('mars');
+        console.log('RESPONSE: ', results);
+        
+        expectedNames.forEach((ename) => {
+            expect(results.find((it) => it.name.includes(ename))).toBeDefined();
         });
+    })
+
+    test('can search for a body and retrieve the object information', async () => {
+        const horizons = new Horizons();
+        const results = await horizons.search('399');
+        console.log('RESPONSE: ', results);
+
+        expect(results).toBeDefined();
+        expect(results).toEqual(expect.any(Array));
+        expect(results.length).toBe(1);
+        expect(results[0].name).toEqual('Earth');
+    })
+
+    test('can search for a body and retrieve the object ephemeris', async () => {
+        const horizons = new Horizons();
+        const results = await horizons.search('399', true);
+        console.log('RESPONSE: ', results);
+        expect(results).toBeDefined();
+        expect(results).toEqual(expect.any(Array));
+        expect(results.length).toBe(1);
+        expect(results[0].name).toEqual('Earth');
     })
 
 });
